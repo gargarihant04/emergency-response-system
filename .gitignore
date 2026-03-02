@@ -1,0 +1,17 @@
+# Node/Python Dependencies
+node_modules/
+__pycache__/
+venv/
+
+# Environment Variables & Secrets
+.env
+*.pem
+*.key
+
+# Terraform State Files (Crucial for later)
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# OS generated files
+.DS_Store
