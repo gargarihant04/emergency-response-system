@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emergency-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emergency-api
+  template:
+    metadata:
+      labels:
+        app: emergency-api
+    spec:
+      containers:
+      - name: emergency-api
+        image: gargarihant04/emergency-api:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DB_HOST
+          value: "postgres-service"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "sos_db"
+        - name: DB_USER
+          value: "sos_admin"
+        - name: DB_PASSWORD
+          value: "admin123"

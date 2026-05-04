@@ -30,3 +30,58 @@ resource "aws_internet_gateway" "igw" {
     Name = "SOS-Internet-Gateway"
   }
 }
+
+# 4. Create a Route Table to direct traffic to the Internet Gateway
+resource "aws_route_table" "public_rt" {
+  vpc_id = aws_vpc.sos_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0" # All outside internet traffic
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = "SOS-Public-Route-Table"
+  }
+}
+
+# 5. Associate the Route Table with your Public Subnet
+resource "aws_route_table_association" "public_rt_assoc" {
+  subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+# 6. Create a Security Group (The Firewall)
+resource "aws_security_group" "sos_sg" {
+  name        = "sos-api-sg"
+  description = "Allow inbound SSH and API traffic"
+  vpc_id      = aws_vpc.sos_vpc.id
+
+  # Allow SSH to access the machine
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] 
+  }
+
+  # Allow external API calls (e.g., your React frontend or curl commands)
+  ingress {
+    from_port   = 8000
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow the server to download updates and Docker images
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1" # -1 means all protocols
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "SOS-Security-Group"
+  }
+}

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: emergency-api-service
+spec:
+  selector:
+    app: emergency-api  # This must match the label in your deployment.yaml
+  ports:
+    - protocol: TCP
+      port: 8000        # The port the cluster sees
+      targetPort: 8000  # The port your FastAPI container is listening on
+  type: ClusterIP       # Keeps it secure inside the cluster for now
